@@ -476,6 +476,45 @@ class Room extends EventEmitter
 	}
 
 	/**
+	 * Connect a Broadcaster mediasoup PlainTransport.
+	 *
+	 * @async
+	 *
+	 * @type {String} broadcasterId
+	 * @type {String} transportId
+	 * @type {RTCDtlsParameters} dtlsParameters - Remote DTLS parameters.
+	 */
+     async connectBroadcasterPlainTransport(
+		{
+			broadcasterId,
+			transportId,
+            ip,
+            port,
+            rtcpPort,
+            srtpParameters
+		}
+	)
+	{
+		const broadcaster = this._broadcasters.get(broadcasterId);
+
+		if (!broadcaster)
+			throw new Error(`broadcaster with id "${broadcasterId}" does not exist`);
+
+		const transport = broadcaster.data.transports.get(transportId);
+
+		if (!transport)
+			throw new Error(`transport with id "${transportId}" does not exist`);
+
+		if (transport.constructor.name !== 'PlainTransport')
+		{
+			throw new Error(
+				`transport with id "${transportId}" is not a PlainTransport`);
+		}
+
+		await transport.connect({ip, port, rtcpPort, srtpParameters});
+	} 
+
+	/**
 	 * Connect a Broadcaster mediasoup WebRtcTransport.
 	 *
 	 * @async

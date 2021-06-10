@@ -249,6 +249,37 @@ async function createExpressApp()
 	 * POST API to connect a Transport belonging to a Broadcaster. Not needed
 	 * for PlainTransport if it was created with comedia option set to true.
 	 */
+     expressApp.post(
+		'/rooms/:roomId/broadcasters/:broadcasterId/plainTransports/:transportId/connect',
+		async (req, res, next) =>
+		{
+			const { broadcasterId, transportId } = req.params;
+			const { ip, port, rtcpPort, srtpParameters } = req.body;
+
+			try
+			{
+				const data = await req.room.connectBroadcasterPlainTransport(
+					{
+						broadcasterId,
+						transportId,
+						ip,
+                        port,
+                        rtcpPort,
+                        srtpParameters
+					});
+
+				res.status(200).json(data);
+			}
+			catch (error)
+			{
+				next(error);
+			}
+		});
+
+	/**
+	 * POST API to connect a Transport belonging to a Broadcaster. Not needed
+	 * for PlainTransport if it was created with comedia option set to true.
+	 */
 	expressApp.post(
 		'/rooms/:roomId/broadcasters/:broadcasterId/transports/:transportId/connect',
 		async (req, res, next) =>
